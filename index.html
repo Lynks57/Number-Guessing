@@ -64,7 +64,7 @@
     }
     function isFailed() {
         if (guessHistory.length === 5) {
-            message.textContent = `You Failed! 答案是 ${targetNumber}`;
+            message.textContent = `You Failed! 答案是 ${targetNumber}，5秒後重新開始遊戲!`;
             message.style.color = "red";
             guessField.value = "";
             guessSubmit.disabled = true;
