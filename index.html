@@ -8,7 +8,8 @@
 
 <body>
     <h1>猜數字遊戲</h1>
-    <p><span class="lowerNum">1</span> 到 <span class="upperNum">100</span> 之間的數字，你猜是多少？</p>
+    <p><span class="lowerNum">1</span> 到 <span class="upperNum">100</span> 之間的數字，你猜是多少？可以猜<span
+            class="guessLeft">5</span>次!</p>
     <input type="text" id="guessField" />
     <input type="submit" value="猜!" id="guessSubmit" />
     <input type="submit" value="Reveal" id="tgtReveal" />
@@ -26,6 +27,7 @@
     const tgtReveal = document.getElementById("tgtReveal");
     const lowerText = document.querySelector(".lowerNum");
     const upperText = document.querySelector(".upperNum");
+    const guessLeft = document.querySelector(".guessLeft")
     let lowerLimit = parseInt(lowerText.textContent)
     let upperLimit = parseInt(upperText.textContent)
 
@@ -42,9 +44,17 @@
         guessSubmit.disabled = true;
         tgtReveal.disabled = true;
     }
+    function isFailed() {
+        if (guessHistory.length === 5) {
+            message.textContent = `You Failed! 答案是 ${targetNumber}`;
+            message.style.color = "red";
+            guessField.value = "";
+            guessSubmit.disabled = true;
+            tgtReveal.disabled = true;
 
+        }
+    }
     function checkGuess() {
-        console.log(lowerLimit)
         const userGuess = parseInt(guessField.value);
         console.log("userGuess: " + userGuess);
         guessHistory.push(userGuess);
@@ -54,27 +64,36 @@
         if (userGuess > targetNumber && userGuess < upperLimit) {
             upperLimit = parseInt(guessField.value)
         }
-
         if (isNaN(userGuess)) {
             message.textContent = `請輸入數字`;
             message.style.color = "red";
+            guessLeft.textContent = 5 - guessHistory.length
+            isFailed()
         } else {
             if (userGuess > upperLimit || userGuess < lowerLimit) {
                 message.textContent = `請輸入介於${lowerLimit}到${upperLimit}的數字`;
                 message.style.color = "red";
+                guessLeft.textContent = 5 - guessHistory.length
+                isFailed()
             } else {
                 if (userGuess === targetNumber) {
                     message.textContent = `恭喜你，你猜對了！你這次猜了 ${guessHistory.length} 次哦～`;
                     message.style.color = "green";
                     guessSubmit.disabled = true;
-                } else if (userGuess < targetNumber) {
-                    message.textContent = `太小了，請輸入介於${lowerLimit}到${upperLimit}的數字`;
-                    message.style.color = "red";
-                    lowerText.textContent = userGuess
+                    tgtReveal.disabled = true;
                 } else {
-                    message.textContent = `太大了，請輸入介於${lowerLimit}到${upperLimit}的數字`;
-                    message.style.color = "red";
-                    upperText.textContent = userGuess
+                    if (userGuess < targetNumber) {
+                        message.textContent = `太小了，請輸入介於${lowerLimit}到${upperLimit}的數字`;
+                        message.style.color = "red";
+                        lowerText.textContent = userGuess
+                    }
+                    else {
+                        message.textContent = `太大了，請輸入介於${lowerLimit}到${upperLimit}的數字`;
+                        message.style.color = "red";
+                        upperText.textContent = userGuess
+                    }
+                    guessLeft.textContent = 5 - guessHistory.length
+                    isFailed()
                 }
             }
         }
