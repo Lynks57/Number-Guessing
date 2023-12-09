@@ -11,6 +11,7 @@
     <p><span class="lowerNum">1</span> 到 <span class="upperNum">100</span> 之間的數字，你猜是多少？</p>
     <input type="text" id="guessField" />
     <input type="submit" value="猜!" id="guessSubmit" />
+    <input type="submit" value="Reveal" id="tgtReveal" />
     <p class="message"></p>
 </body>
 <script>
@@ -22,6 +23,7 @@
     const guessField = document.getElementById("guessField");
     const guessSubmit = document.getElementById("guessSubmit");
     const message = document.querySelector(".message");
+    const tgtReveal = document.getElementById("tgtReveal");
     const lowerText = document.querySelector(".lowerNum");
     const upperText = document.querySelector(".upperNum");
     let lowerLimit = parseInt(lowerText.textContent)
@@ -29,9 +31,17 @@
 
     // Event listener
     guessSubmit.addEventListener("click", checkGuess);
+    tgtReveal.addEventListener("click", tgtShowNum)
 
     // Guess function
     const guessHistory = [];
+    function tgtShowNum() {
+        message.textContent = `答案是${targetNumber}`;
+        message.style.color = "green";
+        guessField.value = "";
+        guessSubmit.disabled = true;
+        tgtReveal.disabled = true;
+    }
 
     function checkGuess() {
         console.log(lowerLimit)
