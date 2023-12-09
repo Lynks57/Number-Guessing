@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+
+<head>
+    <title>猜數字遊戲</title>
+    <meta charset="utf-8" />
+</head>
+
+<body>
+    <h1>猜數字遊戲</h1>
+    <p><span class="lowerNum">1</span> 到 <span class="upperNum">100</span> 之間的數字，你猜是多少？</p>
+    <input type="text" id="guessField" />
+    <input type="submit" value="猜!" id="guessSubmit" />
+    <p class="message"></p>
+</body>
+<script>
+    // Random number
+    const targetNumber = Math.floor(Math.random() * 100) + 1;
+    console.log("answer: " + targetNumber);
+
+    // Get element
+    const guessField = document.getElementById("guessField");
+    const guessSubmit = document.getElementById("guessSubmit");
+    const message = document.querySelector(".message");
+    const lowerText = document.querySelector(".lowerNum");
+    const upperText = document.querySelector(".upperNum");
+    let lowerLimit = parseInt(lowerText.textContent)
+    let upperLimit = parseInt(upperText.textContent)
+
+    // Event listener
+    guessSubmit.addEventListener("click", checkGuess);
+
+    // Guess function
+    const guessHistory = [];
+
+    function checkGuess() {
+        console.log(lowerLimit)
+        const userGuess = parseInt(guessField.value);
+        console.log("userGuess: " + userGuess);
+        guessHistory.push(userGuess);
+        if (userGuess < targetNumber && userGuess > lowerLimit) {
+            lowerLimit = parseInt(guessField.value)
+        }
+        if (userGuess > targetNumber && userGuess < upperLimit) {
+            upperLimit = parseInt(guessField.value)
+        }
+
+        if (isNaN(userGuess)) {
+            message.textContent = `請輸入數字`;
+            message.style.color = "red";
+        } else {
+            if (userGuess > upperLimit || userGuess < lowerLimit) {
+                message.textContent = `請輸入介於${lowerLimit}到${upperLimit}的數字`;
+                message.style.color = "red";
+            } else {
+                if (userGuess === targetNumber) {
+                    message.textContent = `恭喜你，你猜對了！你這次猜了 ${guessHistory.length} 次哦～`;
+                    message.style.color = "green";
+                    guessSubmit.disabled = true;
+                } else if (userGuess < targetNumber) {
+                    message.textContent = `太小了，請輸入介於${lowerLimit}到${upperLimit}的數字`;
+                    message.style.color = "red";
+                    lowerText.textContent = userGuess
+                } else {
+                    message.textContent = `太大了，請輸入介於${lowerLimit}到${upperLimit}的數字`;
+                    message.style.color = "red";
+                    upperText.textContent = userGuess
+                }
+            }
+        }
+        guessField.value = "";
+        guessField.focus();
+    }
+</script>
+
+</html>
