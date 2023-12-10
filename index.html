@@ -15,6 +15,7 @@
     <input type="submit" value="揭曉答案" id="tgtReveal" />
     <input type="submit" value="再玩一次" id="reset" />
     <p class="message"></p>
+    <p class="timer"></p>
 </body>
 <script>
     // Random number
@@ -25,6 +26,7 @@
     const guessField = document.getElementById("guessField");
     const guessSubmit = document.getElementById("guessSubmit");
     const message = document.querySelector(".message");
+    const timer = document.querySelector(".timer");
     const tgtReveal = document.getElementById("tgtReveal");
     const lowerText = document.querySelector(".lowerNum");
     const upperText = document.querySelector(".upperNum");
@@ -37,14 +39,29 @@
     guessSubmit.addEventListener("click", checkGuess);
     tgtReveal.addEventListener("click", tgtShowNum);
     reset.addEventListener("click", replay);
-
-    // Guess function
     const guessHistory = [];
+    // timer function
+    function display(num) {
+        timer.textContent = `${String(num)}秒後開始新遊戲!`;
+        timer.style.color = "red";
+    }
+    function delayedDisplay(num, ms, callback) {
+        setTimeout(callback, ms, num);
+    }
+    function repeat(func, time, num, callback) {
+        for (let i = 0; i <= time; i++) {
+            ms = (time - num) * 1000;
+            func(num, ms, callback);
+            num--;
+        }
+    }
+    // replay function
     function replay() {
         targetNumber = Math.floor(Math.random() * 100) + 1;
         console.log("answer: " + targetNumber);
         guessSubmit.disabled = false;
         tgtReveal.disabled = false;
+        reset.disabled = false;
         guessField.value = "";
         guessField.focus();
         lowerText.textContent = 1;
@@ -53,8 +70,10 @@
         upperLimit = parseInt(upperText.textContent);
         guessLeft.textContent = 5;
         message.textContent = "";
+        timer.textContent = ""
         guessHistory.splice(0, guessHistory.length);
     }
+    // reveal answer function
     function tgtShowNum() {
         message.textContent = `答案是${targetNumber}`;
         message.style.color = "green";
@@ -62,16 +81,20 @@
         guessSubmit.disabled = true;
         tgtReveal.disabled = true;
     }
+    // check failed function
     function isFailed() {
         if (guessHistory.length === 5) {
-            message.textContent = `You Failed! 答案是 ${targetNumber}，5秒後重新開始遊戲!`;
+            message.textContent = `You Failed! 答案是 ${targetNumber}!`;
             message.style.color = "red";
             guessField.value = "";
             guessSubmit.disabled = true;
             tgtReveal.disabled = true;
+            reset.disabled = true;
+            repeat(delayedDisplay, 5, 5, display)
             setTimeout(replay, 5000);
         }
     }
+    // Guess function
     function checkGuess() {
         const userGuess = parseInt(guessField.value);
         console.log("userGuess: " + userGuess);
